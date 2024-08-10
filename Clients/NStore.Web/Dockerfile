@@ -24,6 +24,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Clients/NStore.Web/NStore.Web.csproj", "Clients/NStore.Web/"]
 COPY ["Shared/NStore.Shared/NStore.Shared.csproj", "Shared/NStore.Shared/"]
+COPY ["BuildingBlocks/NStore.Logging/NStore.Logging.csproj", "BuildingBlocks/NStore.Logging/"]
 RUN dotnet restore "./Clients/NStore.Web/NStore.Web.csproj"
 COPY . .
 WORKDIR "/src/Clients/NStore.Web"

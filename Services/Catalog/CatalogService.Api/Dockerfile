@@ -26,6 +26,7 @@ COPY ["Services/Catalog/CatalogService.Api/CatalogService.Api.csproj", "Services
 COPY ["Shared/NStore.Shared/NStore.Shared.csproj", "Shared/NStore.Shared/"]
 COPY ["Services/Catalog/CatalogService.Application/CatalogService.Application.csproj", "Services/Catalog/CatalogService.Application/"]
 COPY ["BuildingBlocks/NStore.Messages/NStore.Messages.csproj", "BuildingBlocks/NStore.Messages/"]
+COPY ["BuildingBlocks/NStore.Logging/NStore.Logging.csproj", "BuildingBlocks/NStore.Logging/"]
 COPY ["Services/Catalog/CatalogService.Infrastructure/CatalogService.Infrastructure.csproj", "Services/Catalog/CatalogService.Infrastructure/"]
 COPY ["Services/Catalog/CatalogService.Domain/CatalogService.Domain.csproj", "Services/Catalog/CatalogService.Domain/"]
 RUN dotnet restore "./Services/Catalog/CatalogService.Api/CatalogService.Api.csproj"

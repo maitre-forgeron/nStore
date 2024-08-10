@@ -24,6 +24,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Carting/CartingService.Api/CartingService.Api.csproj", "Services/Carting/CartingService.Api/"]
 COPY ["BuildingBlocks/NStore.Messages/NStore.Messages.csproj", "BuildingBlocks/NStore.Messages/"]
+COPY ["BuildingBlocks/NStore.Logging/NStore.Logging.csproj", "BuildingBlocks/NStore.Logging/"]
 COPY ["Shared/NStore.Shared/NStore.Shared.csproj", "Shared/NStore.Shared/"]
 COPY ["Services/Carting/CartingService.Application/CartingService.Application.csproj", "Services/Carting/CartingService.Application/"]
 COPY ["Services/Carting/CartingService.DAL/CartingService.DAL.csproj", "Services/Carting/CartingService.DAL/"]
