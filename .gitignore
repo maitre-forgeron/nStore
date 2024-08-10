@@ -1,0 +1,71 @@
+# .NET Core
+bin/
+obj/
+Debug/
+Release/
+*.dll
+*.exe
+*.pdb
+*.user
+*.suo
+*.cache
+*.log
+*.vs/
+.vscode/
+*.csproj.user
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# Visual Studio Code
+.vscode/
+
+# NuGet Packages
+*.nupkg
+packages/
+*.nuspec
+nuget.config
+
+# Build directories
+node_modules/
+bower_components/
+jspm_packages/
+dist/
+out/
+bower_components/
+.sass-cache/
+.sass-cache/**
+dist/
+dist/**
+bundle.js
+bundle.js.map
+coverage/
+tmp/
+tmp/**
+logs/
+logs/**
+*.tgz
+*.zip
+
+# Others
+*.bak
+*.bak.*
+*.backup.*
+*.log
+*.log.*
+*.dbmdl
+*.dbproj.schemaview
+
+
+# LiteDb
+CartCollection.db
+
+# Keys
+keys

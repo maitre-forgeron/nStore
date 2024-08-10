@@ -1,0 +1,168 @@
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    ports:
+        - "5672:5672"
+        - "15672:15672"
+
+  catalogdb:
+    container_name: catalogdb
+    environment:
+        SA_PASSWORD: "SwN12345678"
+        ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+        - "1433:1433"
+    volumes:
+        - sql_data:/var/opt/mssql
+
+  cartingdb:
+    container_name: cartingdb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+        - mongo_data:/data/db  
+
+  mongoExpressUi:
+    container_name: mongoExpressUi
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+        - xpack.monitoring.templates.enabled=true
+        - xpack.watcher.enabled=false
+        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        - discovery.type=single-node
+        - xpack.security.http.ssl.enabled=false
+        - xpack.security.enabled=false
+    ports:
+        - "9200:9200"
+    volumes:
+        - elasticsearch-data:/usr/share/elasticsearch/data   
+
+  kibana:
+    container_name: kibana
+    environment:        
+        - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+        - elasticsearch
+    ports:
+        - "5601:5601"  
+
+  cartingservice.api:
+    container_name: cartingservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp-carting-api.pfx
+      - DbSettings:ConnectionString=mongodb://root:example@mongo:27017/
+      - "DbSettings:CartsCollectionName=carts"
+      - "DbSettings:ItemsCollectionName=items"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "Auth:Authority=https://nstore.identity:443"
+      - "Auth:ClientId=storeWeb"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200" 
+    ports:
+      - "6001:443"
+    depends_on:
+        - rabbitmq
+        - nstore.identity
+        - cartingdb
+    volumes:
+      - ${APPDATA}\Microsoft\UserSecrets\:/root/.microsoft/usersecrets
+      - ./Services/Carting/CartingService.Api/certs:/https/
+      - ./certs:/https-root/
+
+  catalogservice.api:
+    container_name: catalogservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp-catalog-api.pfx
+      - "ConnectionStrings:CatalogServiceDbContext=data source=catalogdb; initial catalog=Catalog; App=Store.CatalogService; User Id=sa;Password=SwN12345678; TrustServerCertificate=True"   
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "Auth:Authority=https://nstore.identity:443"
+      - "Auth:ClientId=storeWeb"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+    ports:
+      - "6002:443"
+    depends_on:
+        - catalogdb
+        - rabbitmq
+        - nstore.identity
+    volumes:
+      - ${APPDATA}\Microsoft\UserSecrets\:/root/.microsoft/usersecrets
+      - ./Services/Catalog/CatalogService.Api/certs:/https/
+      - ./certs:/https-root/
+
+  nstore.gateway:
+    container_name: nstore.gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp-gwy-api.pfx
+      - "Auth:Authority=https://nstore.identity:443"
+      - "Auth:ClientId=storeWeb"
+    ports:
+      - "8000:443"
+    depends_on:
+        - nstore.identity
+        - catalogservice.api
+        - cartingservice.api
+    volumes:
+      - ${APPDATA}\Microsoft\UserSecrets\:/root/.microsoft/usersecrets
+      - ./Gateways/NStore.Gateway/certs:/https/
+      - ./certs:/https-root/
+
+  nstore.web:
+    container_name: nstore.web
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT:7001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp-store-web.pfx
+      - "Auth:Authority=https://host.docker.internal:5001"
+      - "Auth:ClientId=storeWeb"
+      - "Auth:ClientSecret=secret"
+      - "Auth:Scopes=openid,profile,roles,offline_access,cartingApi,catalogApi"
+      - "Gateway=https://nstore.gateway:443"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200"
+    ports:
+      - "7001:443"
+    depends_on:
+        - nstore.identity
+        - nstore.gateway
+    volumes:
+      - ${APPDATA}\Microsoft\UserSecrets\:/root/.microsoft/usersecrets
+      - ./Clients/NStore.Web/certs:/https/
+      - ./certs:/https-root/
+
+  nstore.identity:
+    container_name: nstore.identity
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT:5001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp-identity-server.pfx
+    ports:
+      - "5001:443"
+    volumes:
+      - ${APPDATA}\Microsoft\UserSecrets\:/root/.microsoft/usersecrets
+      - ./Services/Identity/NStore.Identity/certs:/https/
+      - ./certs:/https-root/

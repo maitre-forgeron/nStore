@@ -1,0 +1,59 @@
+services:
+  # nginx:
+  #   image: nginx
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  catalogdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+
+  cartingdb:
+    image: mongo
+
+  mongoExpressUi:
+    image: mongo-express
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.0
+
+  cartingservice.api:
+    image: ${DOCKER_REGISTRY-}cartingserviceapi
+    build:
+      context: .
+      dockerfile: Services/Carting/CartingService.Api/Dockerfile
+
+  catalogservice.api:
+    image: ${DOCKER_REGISTRY-}catalogserviceapi
+    build:
+      context: .
+      dockerfile: Services/Catalog/CatalogService.Api/Dockerfile
+
+
+  nstore.gateway:
+    image: ${DOCKER_REGISTRY-}nstoregateway
+    build:
+      context: .
+      dockerfile: Gateways/NStore.Gateway/Dockerfile
+
+
+  nstore.web:
+    image: ${DOCKER_REGISTRY-}nstoreweb
+    build:
+      context: .
+      dockerfile: Clients/NStore.Web/Dockerfile
+
+
+  nstore.identity:
+    image: ${DOCKER_REGISTRY-}nstoreidentity
+    build:
+      context: .
+      dockerfile: Services/Identity/NStore.Identity/Dockerfile
+
+volumes:
+  sql_data:
+  mongo_data:
+  elasticsearch-data:

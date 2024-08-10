@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "cartingservice.api": "StartDebugging",
+        "catalogservice.api": "StartDebugging",
+        "nstore.gateway": "StartDebugging",
+        "nstore.web": "StartDebugging",
+        "nstore.identity": "StartDebugging"
+      }
+    }
+  }
+}
