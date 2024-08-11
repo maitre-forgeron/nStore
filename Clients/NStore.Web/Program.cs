@@ -4,8 +4,6 @@ using NStore.Web.HttpHandlers;
 using NStore.Web.Services;
 using NStore.Web.Services.Base;
 using NStore.Web.Services.Interfaces;
-using Polly;
-using Polly.Extensions.Http;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,9 +23,7 @@ builder.Services.AddHttpClient<HttpClientService>(options =>
 })
     .AddUserAccessTokenHandler()
     .AddHttpMessageHandler<AuthenticationDelegatingHandler>()
-    .AddPolicyHandler(GetRetryPolicy())
-    .AddPolicyHandler(GetCircuitBreakerPolicy());
-
+    .AddStandardResilienceHandler();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -67,26 +63,3 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
-static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-{
-    return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .WaitAndRetryAsync(
-            retryCount: 5,
-            sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-            onRetry: (exception, retryCount, context) =>
-            {
-                Log.Error($"Retry {retryCount} of {context.PolicyKey} at {context.OperationKey}, due to: {exception}.");
-            });
-}
-
-static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
-{
-    return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .CircuitBreakerAsync(
-            handledEventsAllowedBeforeBreaking: 5,
-            durationOfBreak: TimeSpan.FromSeconds(30)
-        );
-}
