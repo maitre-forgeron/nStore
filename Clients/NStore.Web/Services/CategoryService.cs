@@ -13,13 +13,13 @@ public class CategoryService : ICategoryService
         _http = http;
     }
 
-    public async Task<CategoryViewModel> GetCategoryAsync(int id) => await _http.GetAsync<CategoryViewModel>($"catalog-service/category/{id}");
+    public async Task<CategoryViewModel> GetCategoryAsync(int id) => await _http.GetAsync<CategoryViewModel>($"catalog-service/categories/{id}");
 
-    public async Task<List<CategoryViewModel>> GetCategoriesAsync() => await _http.GetAsync<List<CategoryViewModel>>("catalog-service/category");
+    public async Task<List<CategoryViewModel>> GetCategoriesAsync() => await _http.GetAsync<List<CategoryViewModel>>("catalog-service/categories");
 
-    public async Task<int> AddCategoryAsync(CategoryViewModel model) => await _http.PostAsync<int>("catalog-service/category", model);
+    public async Task<int> AddCategoryAsync(CategoryViewModel model) => await _http.PostAsync<int>("catalog-service/categories", model);
 
-    public async Task UpdateCategoryAsync(CategoryViewModel model) => await _http.PutAsync<object>("catalog-service/category", model);
+    public async Task UpdateCategoryAsync(CategoryViewModel model) => await _http.PutAsync<object>("catalog-service/categories", model);
 
-    public async Task<bool> DeleteCategoryWithRelatedProductsAsync(int id) => await _http.DeleteAsync($"catalog-service/category/{id}");
+    public async Task<bool> DeleteCategoryWithRelatedProductsAsync(int id) => await _http.DeleteAsync($"catalog-service/categories/{id}");
 }

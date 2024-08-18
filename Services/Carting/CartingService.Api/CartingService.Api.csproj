@@ -15,6 +15,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="certs\**" />
+	  <Content Remove="certs\**" />
+	  <EmbeddedResource Remove="certs\**" />
+	  <None Remove="certs\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
 		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
 		<PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.1" />

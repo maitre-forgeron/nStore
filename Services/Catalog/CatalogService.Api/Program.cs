@@ -15,7 +15,8 @@ builder.Host.UseSerilog(SeriLogger.Configure);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
+builder.Services.AddEndpoints(typeof(Program).Assembly);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -63,7 +64,8 @@ app.UseHealthChecks("/hc", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-app.MapControllers();
+//app.MapControllers();
+app.MapEndpoints();
 
 try
 {

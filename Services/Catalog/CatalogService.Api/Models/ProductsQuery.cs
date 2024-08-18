@@ -4,7 +4,7 @@ namespace CatalogService.Api.Models
 {
     public class ProductsQuery : PagedQueryParams
     {
-        [FromQuery]
+        [FromQuery(Name = "page")]
         public int? CategoryId { get; set; }
     }
 }

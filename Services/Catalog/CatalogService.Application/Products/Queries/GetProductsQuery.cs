@@ -27,16 +27,14 @@ namespace CatalogService.Application.Products.Queries
 
             var products = await productsQuery.ToPagedCollectionAsync(request.Dto.Page, request.Dto.Limit);
 
-            var dtos = products.Select(product => _mapper.Map(product)).ToList();
+            var dtos = products.Select(_mapper.Map).ToList();
 
             return new PagedCollection<ProductDto>(dtos, products.ItemCount, products.CurrentPageNumber, products.PageSize);
         }
 
         private IQueryable<Product> GetQueryWithFilters(GetProductsQuery request)
         {
-            return request.Dto.CategoryId.HasValue ?
-                _uow.ProductRepository.GetQueryable(p => p.CategoryId == request.Dto.CategoryId, false, p => p.Category) :
-                _uow.ProductRepository.GetQueryable(null, false, p => p.Category);
+            return _uow.ProductRepository.GetQueryable(null, false, p => p.Category);
         }
     }
 }

@@ -21,7 +21,7 @@ public class ProductService : IProductService
         (List<ProductViewModel> Result, PaginationViewModel HeaderData) result = (new(), new());
 
         if (string.IsNullOrWhiteSpace(nextPageUrl) && string.IsNullOrWhiteSpace(previousPageUrl))
-            result = await _http.GetAsync<List<ProductViewModel>, PaginationViewModel>($"catalog-service/products", "X-Pagination");
+            result = await _http.GetAsync<List<ProductViewModel>, PaginationViewModel>($"catalog-service/products?page=1&limit=2", "X-Pagination");
 
         if (!string.IsNullOrWhiteSpace(nextPageUrl))
             result = await _http.GetAsync<List<ProductViewModel>, PaginationViewModel>($"catalog-service/products?{nextPageUrl}", "X-Pagination");

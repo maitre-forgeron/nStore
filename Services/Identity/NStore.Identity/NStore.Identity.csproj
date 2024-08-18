@@ -11,6 +11,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="certs\**" />
+	  <Content Remove="certs\**" />
+	  <EmbeddedResource Remove="certs\**" />
+	  <None Remove="certs\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Duende.IdentityServer" Version="7.0.6" />
 
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.3" />

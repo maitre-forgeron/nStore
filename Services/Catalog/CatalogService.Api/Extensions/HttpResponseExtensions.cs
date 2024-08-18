@@ -32,6 +32,36 @@ namespace CatalogService.Api.Extensions
             response.Headers.Add(items.ToPaginationHeader(routeName, query, url, includeOnlyQueryString).ToKeyValuePair());
         }
 
+        public static void AddPaginationHeader<T>(
+            this HttpResponse response,
+            IPagedCollection<T> items,
+            string routeName,
+            PagedQueryParams query,
+            LinkGenerator linkGenerator,
+            HttpContext httpContext,
+            bool includeOnlyQueryString = false)
+        {
+            if (response is null)
+                throw new ArgumentNullException(nameof(response));
+
+            if (items is null)
+                throw new ArgumentNullException(nameof(items));
+
+            if (string.IsNullOrEmpty(routeName))
+                throw new ArgumentException($"'{routeName}' required", nameof(routeName));
+
+            if (query is null)
+                throw new ArgumentNullException(nameof(query));
+
+            if (linkGenerator is null)
+                throw new ArgumentNullException(nameof(linkGenerator));
+
+            if (httpContext is null)
+                throw new ArgumentNullException(nameof(httpContext));
+
+            response.Headers.Add(items.ToPaginationHeader(routeName, query, linkGenerator, httpContext, includeOnlyQueryString).ToKeyValuePair());
+        }
+
         public static void AddETagHeader(this HttpResponse response, string etag)
         {
             if (response is null)

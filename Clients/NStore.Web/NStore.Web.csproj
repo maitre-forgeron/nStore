@@ -11,6 +11,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="certs\**" />
+	  <Content Remove="certs\**" />
+	  <EmbeddedResource Remove="certs\**" />
+	  <None Remove="certs\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="IdentityModel" Version="7.0.0" />
 		<PackageReference Include="IdentityModel.AspNetCore" Version="4.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.3" />
